@@ -1,11 +1,13 @@
 #include <flashlight/fl/dataset/BatchDataset.h>
 #include <flashlight/fl/dataset/Dataset.h>
+#include <flashlight/pkg/speech/data/Sound.h>
 
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <string>
 #include <fstream>
@@ -25,7 +27,9 @@ namespace za{
             LoadFunction loader;
             BatchFunction collator;
 
+            void readAudioFile(std::string &audioPath, std::unique_ptr<af::array> af_data);
+
     };
 
-    std::shared_ptr<za::VADDataset> get_dataset();
+    std::shared_ptr<za::VADDataset> getDataset();
 }

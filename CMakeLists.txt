@@ -37,6 +37,16 @@ elseif(BUILD_INFER)
     set(RUN_FILE run_infer)    
     add_executable(${RUN_FILE} ${SRC_FILES} ${HEADER_FILES})
     target_link_libraries(${RUN_FILE} PRIVATE flashlight::flashlight)
+elseif(BUILD_TEST)
+    file(GLOB SRC_FILES src/utils/dataset.cc src/test.cc)
+    file(GLOB HEADER_FILES header/utils/dataset.hh)
+    set(RUN_FILE run_test)    
+    add_executable(${RUN_FILE} ${SRC_FILES} ${HEADER_FILES})
+    target_link_libraries(${RUN_FILE} PRIVATE flashlight::flashlight
+                                              flashlight::fl_pkg_runtime
+                                              flashlight::fl_pkg_speech
+                                              flashlight::fl_lib_audio
+                                              glog::glog)
 else()
     message(FATAL_ERROR "Select one of the options 1. BUILD_INFER 2.BUILD_TRAIN")
 endif()

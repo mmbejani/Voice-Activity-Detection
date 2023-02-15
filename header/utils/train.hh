@@ -6,9 +6,7 @@
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
-
-#include <dataset.hh>
-
+#include "dataset.hh"
 
 namespace za{
     DECLARE_string(model_config);
@@ -19,7 +17,7 @@ namespace za{
         public:
             Train(std::shared_ptr<fl::Sequential>& model, 
                   std::unique_ptr<VADDataset>& dataset,
-                  std::unique_ptr<fl::CategoricalCrossEntropy>& loss_function,
+                  std::unique_ptr<fl::BinaryCrossEntropy>& loss_function,
                   std::unique_ptr<fl::FirstOrderOptimizer>& optimizer,
                   const uint16_t max_epochs);
 
@@ -29,5 +27,7 @@ namespace za{
             void step();
             void start_of_epoch();
             void end_of_epoch();
+
+            std::unique_ptr<fl::BinaryCrossEntropy> loss_function;
     };
 }

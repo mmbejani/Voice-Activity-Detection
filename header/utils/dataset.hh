@@ -13,6 +13,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <json/json.h>
+
 #include <string>
 #include <fstream>
 
@@ -31,7 +33,7 @@ namespace za{
 
         private:
             std::vector<std::string> audio_paths;
-            std::vector<af::array> audio_labels;
+            std::vector<int16_t> audio_labels;
             LoadFunction audioLoader;
             BatchFunction audioCollator, labelCollator;
     };

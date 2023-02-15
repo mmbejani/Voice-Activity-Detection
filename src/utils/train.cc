@@ -10,10 +10,12 @@ namespace za{
 
     Train::Train(std::shared_ptr<fl::Sequential>& model, 
                   std::unique_ptr<VADDataset>& dataset,
-                  std::unique_ptr<fl::CategoricalCrossEntropy>& loss_function,
+                  std::unique_ptr<fl::BinaryCrossEntropy>& loss_function,
                   std::unique_ptr<fl::FirstOrderOptimizer>& optimizer,
-                  const uint16_t max_epochs){
-                    
+                  const uint16_t max_epochs) : loss_function{loss_function}
+                  {
+
+
                   }
 
     void Train::start_train_process(){

@@ -35,33 +35,27 @@ namespace za{
         };
 
         LOG(INFO) << "Reading Manifest ...";
-        auto reader = std::make_unique<std::ifstream>(manifest_path, std::ios_base::openmode::_S_in);
+        std::unique_ptr<std::ifstream> reader = 
+            std::make_unique<std::ifstream>(FLAGS_manifest_path);
+        Json::Value root;
+        Json::CharReaderBuilder builder;
 
-
-        std::string line;
-        while (std::getline(*reader, line))
+        builder["collectComments"] = true;
+        JSONCPP_STRING errs;
+        Json::parseFromStream(builder, *reader, &root, &errs);
+        
+        for (unsigned int i = 0; i < root.size(); i++)
         {
-            std::vector<std::string> elements;
-            boost::algorithm::split(elements, line, boost::is_any_of("\t"));
-
-            this->audio_paths.push_back(elements[0]);
-            //FIXME: read labels and turn them to arrayfire
-            std::vector<unsigned int> labels;
-
-            for (size_t i = 0; i < elements.size(); i++)
-                labels.push_back(boost::lexical_cast<unsigned int>(elements[i]));
-
-            auto labels_array = std::make_unique<af::array>(labels.size(), af::dtype::u16);
-            labels_array->write(labels.data(), labels.size() * sizeof(unsigned int));
+            this->audio_paths.push_back(root[i]["audio_size"].asString());
+            this->audio_labels.push_back(root[i]["audio_label"].asInt());
         }
 
         reader->close();
-
     }
 
-     int64_t VADDataset::size() const { return this->audio_labels.size(); }
+    int64_t VADDataset::size() const { return this->audio_labels.size(); }
 
-     std::vector<af::array> VADDataset::get(const int64_t idx) const {
+    std::vector<af::array> VADDataset::get(const int64_t idx) const {
         return {this->audioLoader(this->audio_paths[idx]),
             this->audio_labels[idx]};
     }
@@ -72,5 +66,5 @@ namespace za{
 
     af::array cat_array(std::vector<af::array>& arrays){
         return arrays[0];
-    }    
+    }
 }

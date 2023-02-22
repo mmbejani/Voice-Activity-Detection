@@ -2,6 +2,7 @@
 
 #include <flashlight/fl/dataset/BatchDataset.h>
 #include <flashlight/fl/dataset/Dataset.h>
+#include <flashlight/fl/dataset/BatchDataset.h>
 #include <flashlight/pkg/speech/data/Sound.h>
 #include <flashlight/fl/flashlight.h>
 #include <flashlight/pkg/speech/common/Flags.h>
@@ -29,13 +30,12 @@ namespace za{
             std::vector<af::array> get(const int64_t idx) const override;
             int64_t size() const override;
 
-            std::vector<af::array> getBatch();
+            BatchFunction audioCollator;         
 
         private:
             std::vector<std::string> audio_paths;
             std::vector<int16_t> audio_labels;
             LoadFunction audioLoader;
-            BatchFunction audioCollator, labelCollator;
     };
 
     std::unique_ptr<za::VADDataset> getDataset();

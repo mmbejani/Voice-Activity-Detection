@@ -8,18 +8,17 @@ namespace za{
     DEFINE_string(model_config, "model.conf", "Path to Config of Model");
     DEFINE_uint32(num_feature, 13, "Number of extracted features");
 
-    Train::Train(std::shared_ptr<fl::Sequential>& model, 
-                  std::shared_ptr<VADDataset>& dataset,
-                  std::shared_ptr<fl::BinaryCrossEntropy>& loss_function,
-                  std::shared_ptr<fl::FirstOrderOptimizer>& optimizer,
-                  uint16_t max_epochs) {
+    Train::Train(std::shared_ptr<fl::Sequential> model, 
+                 std::shared_ptr<VADDataset> dataset,
+                 std::shared_ptr<fl::BinaryCrossEntropy> loss_function,
+                 std::shared_ptr<fl::FirstOrderOptimizer> optimizer,
+                 uint16_t max_epochs) : model(model),
+                                         dataset(dataset),
+                                         loss_function(loss_function),
+                                         optimizer(optimizer),
+                                         max_epochs(max_epochs){
                     LOG(INFO) << "Initializing Traning procedure ...";
-                    this->model = std::make_shared<fl::Sequential>(model);
-                    this->batch_dataset = std::make_shared<fl::BatchDataset>
-                                            (dataset, FLAGS_batch_size, dataset->audioCollator);
-                    this->loss_function = std::make_shared<fl::BinaryCrossEntropy>(loss_function);
-                    this->optimizer = std::make_shared<fl::FirstOrderOptimizer>(optimizer);
-                    this->max_epochs = max_epochs;
+                    auto d = (std::shared_ptr<fl::Dataset>) dataset;
                 }
 
     void Train::start_train_process(){

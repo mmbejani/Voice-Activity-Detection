@@ -17,9 +17,17 @@ endif()
 
 list(APPEND CMAKE_PREFIX_PATH /opt/intel/mkl)
 
+if(CUDA)
+    set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
+    set(CUDNN_INCLUDE_DIR /usr/local/cuda/include)
+    set(CUDNN_LIBRARY /usr/local/cuda/lib64/libcudnn.so)
+endif()
+
+
 find_package(flashlight CONFIG REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
+find_package(jsoncpp REQUIRED)
 
 if(BUILD_TRAIN)
     file(GLOB SRC_FILES src/utils/*.cc)
@@ -29,7 +37,9 @@ if(BUILD_TRAIN)
     target_link_libraries(${RUN_FILE} PRIVATE flashlight::flashlight
                                               flashlight::fl_pkg_runtime
                                               flashlight::fl_lib_audio
-                                              glog::glog)
+                                              flashlight::fl_pkg_speech
+                                              glog::glog
+                                              jsoncpp_lib)
 
 elseif(BUILD_INFER)
     file(GLOB SRC_FILES src/*.cc)

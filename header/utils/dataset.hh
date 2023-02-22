@@ -24,7 +24,8 @@ DECLARE_string(manifest_path);
 
 
 namespace za{
-    class VADDataset: fl::Dataset {
+
+    class VADDataset: public fl::Dataset {
         public:
             VADDataset(std::string &manifest_path=FLAGS_manifest_path, uint32_t batch_size=FLAGS_batch_size);
             std::vector<af::array> get(const int64_t idx) const override;

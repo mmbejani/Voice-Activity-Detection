@@ -18,6 +18,10 @@
 
 #include <string>
 #include <fstream>
+#include <json/json.h>
+#include <json/reader.h>
+#include <json/writer.h>
+#include <json/value.h>
 
 DECLARE_uint32(batch_size);
 DECLARE_string(manifest_path);

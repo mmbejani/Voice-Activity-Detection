@@ -1,17 +1,25 @@
 #include <iostream>
 #include "dataset.hh"
-#include <arrayfire.h>
-#include <flashlight/fl/dataset/BatchDataset.h>
 
 void print_dim_af(const af::array& a){
+    std::cout << "The dims of input tensor is ( ";
     for (int i = 0; i < 4; i++)
-        std::cout << "Dim " << i << " is : " << a.dims(i) << std::endl;
+        std::cout << a.dims(i) << ", ";
+    std::cout << ")" << std::endl;
 }
 
 int main(int argc, char **argv){
-    //auto dataset = std::make_shared<za::VADDataset>("/home/mahdi/Projects/Voice-Activity-");
-    //fl::BatchDataset b_data(,);
-    
+    google::InitGoogleLogging(*argv);
+    google::ParseCommandLineFlags(&argc, &argv, false);
+
+    auto dataset = za::getDataset();
+    auto data = dataset->get(2);
+    for (int i = 0; i < data.size(); i++)
+    {
+        print_dim_af(data[i]);
+    }
+
+    af::print("Label data is : ", data[1]);
     
     return 0;
 }

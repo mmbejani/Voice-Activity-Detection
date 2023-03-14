@@ -1,7 +1,7 @@
 #include "dataset.hh"
 
 DEFINE_uint32(batch_size, 32, "Size of batch size");
-DEFINE_string(manifest_path, "/train_manifest.json", "Path to tsv (TAB Seperated Values) meta data for training");
+DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (TAB Seperated Values) meta data for training");
 
 namespace za{
 
@@ -36,30 +36,36 @@ namespace za{
             return pad_array;
         };
 
-        LOG(INFO) << "Reading Manifest ...";
-        std::unique_ptr<std::ifstream> reader = 
-            std::make_unique<std::ifstream>(FLAGS_manifest_path);
-        Json::Value root;
-        Json::CharReaderBuilder builder;
+        LOG(INFO) << "Reading Manifest From " << FLAGS_manifest_path << " ...";
+        try{
+            std::unique_ptr<std::ifstream> reader = 
+                std::make_unique<std::ifstream>(FLAGS_manifest_path);
+            Json::Value root;
+            Json::CharReaderBuilder builder;
 
-        builder["collectComments"] = true;
-        JSONCPP_STRING errs;
-        Json::parseFromStream(builder, *reader, &root, &errs);
-        
-        for (unsigned int i = 0; i < root.size(); i++)
-        {
-            this->audio_paths.push_back(root[i]["audio_size"].asString());
-            this->audio_labels.push_back(root[i]["audio_label"].asInt());
+            builder["collectComments"] = true;
+            JSONCPP_STRING errs;
+            Json::parseFromStream(builder, *reader, &root, &errs);
+            for (unsigned int i = 0; i < root.size(); i++)
+            {
+                this->audio_paths.push_back(root[i]["audio_path"].asString());
+                this->audio_labels.push_back(root[i]["audio_label"].asInt());
+            }
+
+            reader->close();
+        }catch(...){
+            LOG(INFO) << "Manifest file is not readable ...";
+            exit(-1);
         }
-
-        reader->close();
     }
 
     int64_t VADDataset::size() const { return this->audio_labels.size(); }
 
     std::vector<af::array> VADDataset::get(const int64_t idx) const {
+        constexpr float one[1] = {1};
+        constexpr float zero[1] = {1};
         return {this->audioLoader(this->audio_paths[idx]),
-            this->audio_labels[idx]};
+                this->audio_labels[idx] == 1? af::array(1, one): af::array(1, zero)};
     }
 
     std::unique_ptr<VADDataset> getDataset(){

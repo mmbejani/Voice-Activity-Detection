@@ -15,6 +15,8 @@ namespace za{
 
         this->audioCollator = [](const std::vector<af::array> &dataList){
             unsigned int max_len_data = 0;
+            const int cat_dim = 1;
+            const af::dim4 zero_dim(0,0,0,0);
             for (size_t i = 0; i < dataList.size(); i++)
                 if (max_len_data < dataList[i].dims(0))
                     max_len_data = dataList[i].dims(0);
@@ -22,15 +24,15 @@ namespace za{
             std::vector<af::array> pad_arrays;
             for (size_t i = 0; i < dataList.size(); i++){
                 auto array = dataList[i];
-                af::dim4 pad_size(max_len_data - array.dims(0), 1, 1, 1);
+                af::dim4 pad_size(max_len_data - array.dims(0), 0, 0, 0);
                 auto pad_array = af::pad(dataList[i], 
                                          pad_size, 
-                                         af::dim4(0,0,0,0),
+                                         zero_dim,
                                          af::borderType::AF_PAD_ZERO);
                 pad_arrays.push_back(pad_array);
             }
 
-            af::array pad_array = cat_array(pad_arrays);
+            af::array pad_array = cat_array(cat_dim, pad_arrays);
             return pad_array;
         };
 
@@ -64,7 +66,14 @@ namespace za{
         return std::make_unique<VADDataset>();
     }
 
-    af::array cat_array(std::vector<af::array>& arrays){
-        return arrays[0];
+    af::array cat_array(const int dim, const std::vector<af::array>& arrays){
+        if (arrays.size() == 1) [[unlikely]]
+            return arrays[0];
+
+        auto cat = af::join(dim, arrays[0], arrays[1]);
+        for (unsigned int i = 2; i < arrays.size(); i++)
+            cat = af::join(dim, cat, arrays[i]);
+        
+        [[likely]]return cat;
     }
 }

@@ -45,5 +45,5 @@ namespace za{
 
     std::unique_ptr<za::VADDataset> getDataset();
 
-    af::array cat_array(std::vector<af::array>& arrays);
+    af::array cat_array(const int dim, const std::vector<af::array>& arrays);
 }

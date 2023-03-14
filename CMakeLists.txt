@@ -56,9 +56,10 @@ elseif(BUILD_TEST)
                                               flashlight::fl_pkg_runtime
                                               flashlight::fl_pkg_speech
                                               flashlight::fl_lib_audio
-                                              glog::glog)
+                                              glog::glog
+                                              jsoncpp_lib)
 else()
-    message(FATAL_ERROR "Select one of the options 1. BUILD_INFER 2.BUILD_TRAIN")
+    message(FATAL_ERROR "Select one of the options 1. BUILD_INFER 2.BUILD_TRAIN 3.BUILD_TEST")
 endif()
 
 message(STATUS ${RUN_FILE})

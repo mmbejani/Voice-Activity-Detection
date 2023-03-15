@@ -8,11 +8,11 @@ namespace za{
     DEFINE_string(model_config, "model.conf", "Path to Config of Model");
     DEFINE_uint32(num_feature, 13, "Number of extracted features");
 
-    Train::Train(std::shared_ptr<fl::Sequential> model, 
+    Train::Train(std::shared_ptr<Vad> vad, 
                  std::shared_ptr<fl::BatchDataset> dataset,
                  std::shared_ptr<fl::BinaryCrossEntropy> loss_function,
                  std::shared_ptr<fl::FirstOrderOptimizer> optimizer,
-                 uint16_t max_epochs) : model(model),
+                 uint16_t max_epochs) : vad(vad),
                                          dataset(dataset),
                                          loss_function(loss_function),
                                          optimizer(optimizer),
@@ -36,7 +36,8 @@ namespace za{
         auto targets = fl::Variable(batch[1], false);
 
         //forward path
-        auto outputs = this->model->forward(inputs);                                    
+        
+        auto outputs = (*this->vad)(inputs);
         auto loss = this->loss_function->forward(outputs, targets);
 
         //backward path

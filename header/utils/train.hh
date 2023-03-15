@@ -18,7 +18,7 @@ namespace za{
     class Train {
 
         public:
-            Train(std::shared_ptr<fl::Sequential> model, 
+            Train(std::shared_ptr<Vad> vad, 
                   std::shared_ptr<fl::BatchDataset> dataset,
                   std::shared_ptr<fl::BinaryCrossEntropy> loss_function,
                   std::shared_ptr<fl::FirstOrderOptimizer> optimizer,
@@ -32,7 +32,7 @@ namespace za{
             void start_of_epoch();
             void end_of_epoch();
 
-            std::shared_ptr<fl::Sequential> model;
+            std::shared_ptr<Vad> vad;
             std::shared_ptr<fl::BatchDataset> dataset;
             std::shared_ptr<fl::BatchDataset> batch_dataset;
             std::shared_ptr<fl::BinaryCrossEntropy> loss_function;

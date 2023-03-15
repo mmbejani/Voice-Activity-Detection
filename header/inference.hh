@@ -3,6 +3,8 @@
 #include <flashlight/fl/flashlight.h>
 #include <flashlight/pkg/runtime/common/SequentialBuilder.h>
 
+#include "vad.hh"
+
 using namespace std;
 using namespace fl::pkg::runtime;
 
@@ -11,7 +13,7 @@ namespace za{
     class Inference
     {
     private:
-        std::shared_ptr<fl::Sequential> model;
+        std::shared_ptr<Vad> vad;
 
     public:
         Inference(const string&);

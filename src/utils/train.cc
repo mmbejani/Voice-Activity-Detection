@@ -1,7 +1,7 @@
 #include "train.hh"
 #include "dataset.hh"
+#include "inference.hh"
 
-using fl::pkg::runtime::buildSequentialModule;
 using fl::lib::audio::Mfcc;
 using fl::lib::audio::FeatureParams;
 namespace za{
@@ -9,7 +9,7 @@ namespace za{
     DEFINE_uint32(num_feature, 13, "Number of extracted features");
 
     Train::Train(std::shared_ptr<fl::Sequential> model, 
-                 std::shared_ptr<VADDataset> dataset,
+                 std::shared_ptr<fl::BatchDataset> dataset,
                  std::shared_ptr<fl::BinaryCrossEntropy> loss_function,
                  std::shared_ptr<fl::FirstOrderOptimizer> optimizer,
                  uint16_t max_epochs) : model(model),
@@ -18,7 +18,7 @@ namespace za{
                                          optimizer(optimizer),
                                          max_epochs(max_epochs){
                     LOG(INFO) << "Initializing Traning procedure ...";
-                    auto d = (std::shared_ptr<fl::Dataset>) dataset;
+                    
                 }
 
     void Train::start_train_process(){
@@ -56,23 +56,4 @@ namespace za{
     void Train::end_of_epoch(){
         fl::save("vad.bin", this->model);
     }
-}
-
-int main(int argc, char **argv){
-    fl::init();
-    google::InitGoogleLogging(argv[0]);
-    google::LogToStderr();
-    LOG(INFO) << "Parsing command line flags ...";
-    gflags::ParseCommandLineFlags(&argc, &argv, false);
-
-    LOG(INFO) << "Loading Model ...";
-    auto model = buildSequentialModule(za::FLAGS_model_config, za::FLAGS_num_feature, 2);
-    
-    LOG(INFO) << "Creating Feature Params ...";
-    auto featureParam = FeatureParams();
-    auto mfcc = std::make_shared<Mfcc>(featureParam);
-
-    LOG(INFO) << "Creating Dataset ...";
-    
-    return 0;
 }

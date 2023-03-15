@@ -1,6 +1,6 @@
 #include "dataset.hh"
 
-DEFINE_uint32(batch_size, 32, "Size of batch size");
+DEFINE_uint32(batch_size, 4, "Size of batch size");
 DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (TAB Seperated Values) meta data for training");
 
 namespace za{
@@ -35,7 +35,7 @@ namespace za{
             af::array pad_array = cat_array(cat_dim, pad_arrays);
             return pad_array;
         };
-
+        
         LOG(INFO) << "Reading Manifest From " << FLAGS_manifest_path << " ...";
         try{
             std::unique_ptr<std::ifstream> reader = 
@@ -68,8 +68,8 @@ namespace za{
                 this->audio_labels[idx] == 1? af::array(1, one): af::array(1, zero)};
     }
 
-    std::unique_ptr<VADDataset> getDataset(){
-        return std::make_unique<VADDataset>();
+    std::shared_ptr<VADDataset> getDataset(){
+        return std::make_shared<VADDataset>();
     }
 
     af::array cat_array(const int dim, const std::vector<af::array>& arrays){

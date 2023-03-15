@@ -43,7 +43,7 @@ namespace za{
             LoadFunction audioLoader;
     };
 
-    std::unique_ptr<za::VADDataset> getDataset();
+    std::shared_ptr<za::VADDataset> getDataset();
 
     af::array cat_array(const int dim, const std::vector<af::array>& arrays);
 }

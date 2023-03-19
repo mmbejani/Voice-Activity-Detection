@@ -64,7 +64,11 @@ namespace za{
     std::vector<af::array> VADDataset::get(const int64_t idx) const {
         constexpr float one[1] = {1};
         constexpr float zero[1] = {1};
-        return {this->audioLoader(this->audio_paths[idx]),
+        auto audioData = this->audioLoader(this->audio_paths[idx]);
+        auto audioLength = af::array(1, new float[1]{(float)audioData.dims(0)});
+        
+        return {audioData,
+                audioLength,
                 this->audio_labels[idx] == 1? af::array(1, one): af::array(1, zero)};
     }
 

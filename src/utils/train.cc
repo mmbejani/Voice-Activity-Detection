@@ -37,14 +37,14 @@ namespace za{
 
         //forward path
         
-        auto outputs = (*this->vad)(inputs);
+        auto outputs = (*this->vad)(inputs, inputs.dims()[0]);
         auto loss = this->loss_function->forward(outputs, targets);
 
         //backward path
+        this->optimizer->zeroGrad();
         loss.backward();
 
         //optimization step
-        this->optimizer->zeroGrad();
         this->optimizer->step();
 
         return loss.array();
@@ -55,6 +55,6 @@ namespace za{
     }
 
     void Train::end_of_epoch(){
-        fl::save("vad.bin", this->model);
+        fl::save("vad.bin", this->vad);
     }
 }

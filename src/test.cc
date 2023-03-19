@@ -12,7 +12,19 @@ int main(int argc, char **argv){
     google::InitGoogleLogging(*argv);
     google::ParseCommandLineFlags(&argc, &argv, false);
     
-      
+    auto dataset = za::getDataset();
+    auto loader = fl::BatchDataset(dataset, FLAGS_batch_size,
+                                   fl::BatchDatasetPolicy::INCLUDE_LAST,
+                                   {dataset->audioCollator});
+
+    for (auto &&batch : loader)
+    {
+        print_dim_af(batch[0]);
+        af::print("Audio size",batch[1]);
+        af::print("Audio label", batch[2]);
+        std::cout << "==========================" << std::endl;
+    }
+    
 
     return 0;
 }

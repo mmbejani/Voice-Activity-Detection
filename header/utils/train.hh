@@ -9,11 +9,12 @@
 #include "dataset.hh"
 
 #include <chrono>
-
+#include <boost/format.hpp>
 
 namespace za{
     DECLARE_string(model_config);
     DECLARE_uint32(num_feature);
+    DECLARE_string(checkpoint_path);
 
     class Train {
 
@@ -29,8 +30,8 @@ namespace za{
         private:
             af::array& step(std::vector<af::array>&);
             void train();
-            void start_of_epoch();
-            void end_of_epoch();
+            void start_of_epoch(const size_t);
+            void end_of_epoch(const size_t);
 
             std::shared_ptr<Vad> vad;
             std::shared_ptr<fl::BatchDataset> dataset;

@@ -4,6 +4,8 @@
 
 using fl::lib::audio::Mfcc;
 using fl::lib::audio::FeatureParams;
+using namespace boost::filesystem;
+
 namespace za{
     DEFINE_string(model_config, "model.conf", "Path to Config of Model");
     DEFINE_uint32(num_feature, 13, "Number of extracted features");
@@ -20,6 +22,11 @@ namespace za{
                                         max_epochs(max_epochs){
                     LOG(INFO) << "Initializing Traning procedure ...";
                     LOG(INFO) << "Try to loading the last checkpoint";
+                    try{
+                        load_model();
+                    }catch(...){
+                        LOG(WARNING) << "Cannot load model from checkpoint";
+                    }
                 }
 
     void Train::start_train_process(){
@@ -55,12 +62,32 @@ namespace za{
         LOG(INFO) << "Epoch " << num_epoch << " is started";
     }
 
-    void Train::end_of_epoch(const size_t num_epoch){
+    void Train::end_of_epoch(const size_t num_epoch) const {
         LOG(INFO) << "Epoch " << num_epoch << " is ended";
         LOG(INFO) << "The model is going to be saved in checkpoint directory ...";
-        auto checkpoint_save_fmt = boost::format("%1%/vad-%2%.bin") % 
+        auto checkpoint_save_fmt = boost::format("%1%/vad-epoch-%2%.bin") % 
                                                 FLAGS_checkpoint_path % 
                                                 num_epoch;
         fl::save(checkpoint_save_fmt.str(), this->vad);
+        return;
+    }
+
+    void Train::load_model(){
+        auto checkpoint_path = find_last_checkpoint();
+        fl::load(checkpoint_path, this->vad);
+        return;
+    }
+
+    std::string Train::find_last_checkpoint() const{
+        path last_checkpoint_path(FLAGS_checkpoint_path);
+        for(auto i = directory_iterator(path(FLAGS_checkpoint_path));
+            i != directory_iterator(); i++){
+                if (last_checkpoint_path < i->path())
+                    last_checkpoint_path = i->path();
+            }
+        return (boost::format("%1%/%2%")
+                    % FLAGS_checkpoint_path 
+                    % last_checkpoint_path.filename().string())
+                    .str();
     }
 }

@@ -6,10 +6,13 @@
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
-#include "dataset.hh"
 
 #include <chrono>
+
 #include <boost/format.hpp>
+#include <boost/filesystem.hpp>
+
+#include "dataset.hh"
 
 namespace za{
     DECLARE_string(model_config);
@@ -31,7 +34,9 @@ namespace za{
             af::array& step(std::vector<af::array>&);
             void train();
             void start_of_epoch(const size_t);
-            void end_of_epoch(const size_t);
+            void end_of_epoch(const size_t) const;
+            std::string find_last_checkpoint() const;
+            void load_model();
 
             std::shared_ptr<Vad> vad;
             std::shared_ptr<fl::BatchDataset> dataset;

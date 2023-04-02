@@ -28,9 +28,11 @@ make -j 2
 Instead of `OPTION` use the following option 
 
 
+| OPTION | Description | Result File |
+| :---:  | :---------: | :---------: |
+| `TRAIN`| Compile the files for training phase | `run_train`
+| `TEST` | Compile the corresponding files for test some utterance locally | `run_test`
+| `INFER`| Compile the files for making the model as library (compile all dependency in shared manner). Then the result can be installed (run `make install`). | `sad.so`
+| `SERV` | Compile the corresponding files for GRPC server | `run_server`
 
-
-
-
-
-choose between `-DTRAIN=ON` to build project for training and `-DINFER=ON` to build project for inference on local data,. Beside, corresponding to building option in the last step a run file is maked. `
+One can choose one the above options.

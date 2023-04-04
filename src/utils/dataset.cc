@@ -69,7 +69,7 @@ namespace za{
         
         return {audioData,
                 audioLength,
-                this->audio_labels[idx] == 1? af::array(1, one): af::array(1, zero)};
+                this->audio_labels[idx] == 1 ? af::array(1, one) : af::array(1, zero)};
     }
 
     std::shared_ptr<VADDataset> getDataset(){

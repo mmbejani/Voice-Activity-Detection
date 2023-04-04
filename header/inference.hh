@@ -1,6 +1,7 @@
 #pragma once
 
 #include <flashlight/fl/flashlight.h>
+#include <flashlight/pkg/speech/data/Sound.h>
 #include <flashlight/pkg/runtime/common/SequentialBuilder.h>
 
 #include <fstream>
@@ -9,6 +10,7 @@
 
 using namespace std;
 using namespace fl::pkg::runtime;
+using namespace fl::pkg::speech;
 
 namespace za{
 
@@ -24,7 +26,7 @@ namespace za{
         fl::Variable infer(const string&);
 
         //For inferencing from single stream of utterance bytes
-        fl::Variable infer(const ifstream&);
+        fl::Variable infer(ifstream&);
 
         //For inferencing from single tensor respect to an utterance
         fl::Variable infer(const fl::Variable&);

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "dataset.hh"
+#include "inference.hh"
 
 void print_dim_af(const af::array& a){
     std::cout << "The dims of input tensor is ( ";
@@ -12,18 +13,13 @@ int main(int argc, char **argv){
     google::InitGoogleLogging(*argv);
     google::ParseCommandLineFlags(&argc, &argv, false);
     
-    auto dataset = za::getDataset();
+    /*auto dataset = za::getDataset();
     auto loader = fl::BatchDataset(dataset, FLAGS_batch_size,
                                    fl::BatchDatasetPolicy::INCLUDE_LAST,
-                                   {dataset->audioCollator});
+                                   {dataset->audioCollator});*/
 
-    for (auto &&batch : loader)
-    {
-        print_dim_af(batch[0]);
-        af::print("Audio size",batch[1]);
-        af::print("Audio label", batch[2]);
-        std::cout << "==========================" << std::endl;
-    }
+    auto infer = new za::Inference("/home/mahdi/Project/Voice-Activity-Detection/src/model.conf");
+    
     
 
     return 0;

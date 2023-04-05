@@ -68,13 +68,13 @@ namespace za{
         auto checkpoint_save_fmt = boost::format("%1%/vad-epoch-%2%.bin") % 
                                                 FLAGS_checkpoint_path % 
                                                 num_epoch;
-        fl::save(checkpoint_save_fmt.str(), this->vad);
+        fl::save(checkpoint_save_fmt.str(), this->vad->model);
         return;
     }
 
     void Train::load_model(){
         auto checkpoint_path = find_last_checkpoint();
-        fl::load(checkpoint_path, this->vad);
+        fl::load(checkpoint_path, this->vad->model);
         return;
     }
 

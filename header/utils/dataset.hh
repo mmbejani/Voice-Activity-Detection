@@ -23,6 +23,8 @@
 #include <json/writer.h>
 #include <json/value.h>
 
+#include "utils.hh"
+
 DECLARE_uint32(batch_size);
 DECLARE_string(manifest_path);
 

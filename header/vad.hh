@@ -6,21 +6,22 @@
 #include <flashlight/lib/audio/feature/FeatureParams.h>
 
 using namespace fl::lib::audio;
+using namespace std;
 
 namespace za{
 
     class Vad
     {
     private:
-        std::shared_ptr<Mfcc> MfccFeature;
-
-        std::shared_ptr<fl::Sequential> model;
+        std::shared_ptr<Mfcc> mfccFeature;
 
     public:
+        std::shared_ptr<fl::Sequential> model;
+
         Vad(std::shared_ptr<fl::Sequential> model);
         
-        fl::Variable operator()(const fl::Variable& input_signals, const af::array& input_sizes) const;
-        fl::Variable featureExtractor(const fl::Variable& input_signal) const;
+        fl::Variable operator()(const vector<vector<float>>& input_signals, const af::array& input_sizes) const;
+        af::array featureExtractor(const vector<float>& input_signal) const;
         fl::Variable forward(const fl::Variable&,const af::array&) const;
     };
 }

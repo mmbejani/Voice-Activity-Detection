@@ -13,6 +13,7 @@
 #include <boost/filesystem.hpp>
 
 #include "dataset.hh"
+#include "vad.hh"
 
 namespace za{
     DECLARE_string(model_config);

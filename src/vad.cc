@@ -23,22 +23,36 @@ namespace za{
        *  bool rawenergy = true,
        *  bool zeromeanframe = true
       */
-      this->MfccFeature = std::make_shared<Mfcc>(FeatureParams());
+      this->mfccFeature = std::make_shared<Mfcc>(FeatureParams());
     }
 
-    fl::Variable Vad::operator()(const fl::Variable& input_signals,
+    fl::Variable Vad::operator()(const std::vector<std::vector<float>>& input_signals,
                                  const af::array& input_sizes) const {
-        auto mfccFeatures = featureExtractor(input_signals);
+        
+        for (int i = 0; i < input_signals.size(); i++)
+        {
+          auto mfcc = featureExtractor(input_signals[i]);
+          
+        }
+        
+
         return forward(mfccFeatures, input_sizes);
     }
 
+    af::array Vad::featureExtractor(const vector<float>& input_signal) const {
+      auto output_dim = af::dim4(mfccFeature->getFeatureParams().numFrames(input_signal.size()),
+                                 mfccFeature->getFeatureParams().numCepstralCoeffs);
+      auto feature = af::array(output_dim,
+                        this->mfccFeature->apply(input_signal).data());
+      return feature
+    }
 
     fl::Variable Vad::forward(
         const fl::Variable& mfccFeature,
         const af::array& input_sizes) const {
 
       // expected input dims T x C x 1 x B
-      int T = mfccFeature.dims(0), B = mfccFeature.dims(3);
+      int T = mfccFeature.dims(0);
       int B = mfccFeature.dims(3);
       auto inputMaxSize = af::tile(af::max(input_sizes), 1, B);
       af::array inputNotPaddedSize = af::ceil(input_sizes * T / inputMaxSize);

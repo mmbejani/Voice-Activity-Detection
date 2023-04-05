@@ -75,15 +75,4 @@ namespace za{
     std::shared_ptr<VADDataset> getDataset(){
         return std::make_shared<VADDataset>();
     }
-
-    af::array cat_array(const int dim, const std::vector<af::array>& arrays){
-        if (arrays.size() == 1) [[unlikely]]
-            return arrays[0];
-
-        auto cat = af::join(dim, arrays[0], arrays[1]);
-        for (unsigned int i = 2; i < arrays.size(); i++)
-            cat = af::join(dim, cat, arrays[i]);
-        
-        [[likely]]return cat;
-    }
 }

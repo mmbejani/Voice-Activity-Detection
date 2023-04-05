@@ -3,7 +3,7 @@ This library has been implemented for voice activity detection (VAD) by human vo
 
 
 # Pre-requirements
-This library is highly depends on Flashlight library (url!!!!!!). Then take to following step to install it:
+This library is highly depends on [Flashlight](https://github.com/flashlight/flashlight) library version 0.3. Then take to following step to install it:
  1) Install libraries `boost`, `glog`, `gflag`, and `json`, 
  2) Install Flashlight from following link (version 0.3):
 

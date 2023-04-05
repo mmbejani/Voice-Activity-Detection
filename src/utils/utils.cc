@@ -12,12 +12,24 @@ namespace za {
         [[likely]]return cat;
     }
 
-    af::array pad_array(const int dim, const std::vector<af::array>& arrays){
-        int max_size = 0;
-        for (int i = 0; i < arrays.size();i++)
+    af::array pad_cat_array(const int dim, const vector<af::array>& arrays, int max_size){
+        if (max_size == -1) {
+            for (int i = 0; i < arrays.size();i++)
+                if (max_size > arrays[i].dims(dim))
+                    max_size = arrays[i].dims(dim);
+        }
+
+        vector<af::array> pad_arrays;
+        af::dim4 begin_pad(0,0,0,0);
+        for (int i = 0; i < arrays.size(); i++)
         {
-            /* code */
+            af::dim4 end_pad(0,0,0,0);
+            end_pad[dim] = max_size - arrays[i].dims(dim);
+            pad_arrays.push_back(
+                af::pad(arrays[i], begin_pad, end_pad, af::borderType::AF_PAD_ZERO)
+            );
         }
         
+        return cat_array(dim, pad_arrays);       
     }
 }

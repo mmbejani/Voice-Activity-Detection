@@ -23,11 +23,15 @@
 #include <json/writer.h>
 #include <json/value.h>
 
+#include <flashlight/lib/audio/feature/Mfcc.h>
+#include <flashlight/lib/audio/feature/FeatureParams.h>
+
 #include "utils.hh"
 
 DECLARE_uint32(batch_size);
 DECLARE_string(manifest_path);
 
+using namespace fl::lib::audio;
 
 namespace za{
 
@@ -36,8 +40,8 @@ namespace za{
             VADDataset(std::string &manifest_path=FLAGS_manifest_path, uint32_t batch_size=FLAGS_batch_size);
             std::vector<af::array> get(const int64_t idx) const override;
             int64_t size() const override;
-
             BatchFunction audioCollator;         
+            std::shared_ptr<Mfcc> preprocessor;
 
         private:
             std::vector<std::string> audio_paths;

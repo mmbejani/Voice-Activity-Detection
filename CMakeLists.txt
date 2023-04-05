@@ -28,6 +28,7 @@ find_package(flashlight CONFIG REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 find_package(jsoncpp REQUIRED)
+find_package(Boost COMPONENTS filesystem REQUIRED)
 
 if(BUILD_TRAIN)
     file(GLOB SRC_FILES src/utils/*.cc)
@@ -50,14 +51,15 @@ elseif(BUILD_INFER)
 elseif(BUILD_TEST)
     file(GLOB SRC_FILES src/utils/* src/*)
     file(GLOB HEADER_FILES header/utils/* header/*)
-    set(RUN_FILE run_test)    
+    set(RUN_FILE run_test)
     add_executable(${RUN_FILE} ${SRC_FILES} ${HEADER_FILES})
     target_link_libraries(${RUN_FILE} PRIVATE flashlight::flashlight
                                               flashlight::fl_pkg_runtime
                                               flashlight::fl_pkg_speech
                                               flashlight::fl_lib_audio
                                               glog::glog
-                                              jsoncpp_lib)
+                                              jsoncpp_lib
+                                              ${Boost_FILESYSTEM_LIBRARY})
 else()
     message(FATAL_ERROR "Select one of the options 1. BUILD_INFER 2.BUILD_TRAIN 3.BUILD_TEST")
 endif()

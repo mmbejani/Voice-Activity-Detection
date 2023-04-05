@@ -28,15 +28,17 @@ namespace za{
 
     fl::Variable Vad::operator()(const std::vector<std::vector<float>>& input_signals,
                                  const af::array& input_sizes) const {
-        
+        vector<af::array> features;
         for (int i = 0; i < input_signals.size(); i++)
-        {
-          auto mfcc = featureExtractor(input_signals[i]);
-          
-        }
-        
+          features.push_back(featureExtractor(input_signals[i]));
 
+        auto mfccFeatures = fl::Variable(za::pad_cat_array(1, features, -1), false);
         return forward(mfccFeatures, input_sizes);
+    }
+
+    fl::Variable Vad::operator()(const fl::Variable& input_mfccs,
+                                 const af::array& input_sizes) const {
+      return forward(input_mfccs, input_sizes);
     }
 
     af::array Vad::featureExtractor(const vector<float>& input_signal) const {
@@ -44,7 +46,7 @@ namespace za{
                                  mfccFeature->getFeatureParams().numCepstralCoeffs);
       auto feature = af::array(output_dim,
                         this->mfccFeature->apply(input_signal).data());
-      return feature
+      return feature;
     }
 
     fl::Variable Vad::forward(

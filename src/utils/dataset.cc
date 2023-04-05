@@ -6,16 +6,20 @@ DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (T
 namespace za{
 
     VADDataset::VADDataset(std::string &manifest_path, uint32_t batch_size){
-        this->audioLoader = [](const std::string &audioPath){
+        this->preprocessor = std::make_shared<Mfcc>(FeatureParams());
+        this->audioLoader = [=](const std::string &audioPath){
                    std::vector<float>data = fl::pkg::speech::loadSound<float>(audioPath);
-                   af::array af_data(data.size(), af::dtype::f32);
-                   af_data.write(data.data(), data.size() * sizeof(float));
-                   return af_data;
+                   std::vector<float> features = this->preprocessor->apply(data);
+                   af::dim4 features_dim(af::dim4(
+                        this->preprocessor->getFeatureParams().numCepstralCoeffs,
+                        this->preprocessor->getFeatureParams().numFrames(data.size())));
+                   af::array af_data(features_dim, features.data());
+                   return af_data.T();
                 };
 
         this->audioCollator = [](const std::vector<af::array> &dataList){
             unsigned int max_len_data = 0;
-            const int cat_dim = 1;
+            const int cat_dim = 2;
             const af::dim4 zero_dim(0,0,0,0);
             for (size_t i = 0; i < dataList.size(); i++)
                 if (max_len_data < dataList[i].dims(0))
@@ -32,7 +36,7 @@ namespace za{
                 pad_arrays.push_back(pad_array);
             }
 
-            af::array pad_array = cat_array(cat_dim, pad_arrays);
+            af::array pad_array = za::cat_array(cat_dim, pad_arrays);
             return pad_array;
         };
         

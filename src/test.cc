@@ -27,25 +27,22 @@ int main(int argc, char **argv){
 
     std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic).count();*/
     
-
     auto model = new za::Inference("/home/mahdi/Project/Voice-Activity-Detection/src/model.conf");
-
     
-    float data[10400];
-    for (int i = 0; i < 10400; i++)
-        data[i] = 0;
+    //auto r = af::randn(af::dim4(400, 1, 13, 1));
+    //fl::Variable tensor(r, false);
     
-    fl::Variable tensor(af::array(af::dim4(400, 2, 13, 1), data), false);
-    std::cout << "Build fake array";
-    auto output = model->infer(tensor);
-
-    for(int i = 0; i <10;i++){
+    auto output = model->infer("/home/mahdi/Downloads/a.wav");
+    int times = 0;
+    for(int i = 0; i <100;i++){
         auto tic = std::chrono::steady_clock::now();
-        auto output = model->infer(tensor);
+        auto output = model->infer("/home/mahdi/Downloads/a.wav");
         auto toc = std::chrono::steady_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic).count() << endl;
+        times += std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic).count();
         print_dim_af(output.array());
     }
+
+    cout << times / 100;
     
     
     return 0;

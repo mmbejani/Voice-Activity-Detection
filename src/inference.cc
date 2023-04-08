@@ -1,4 +1,7 @@
 #include "inference.hh"
+#include <iostream>
+
+using namespace std;
 
 namespace za {
     Inference::Inference(const string& path_to_model){
@@ -17,14 +20,13 @@ namespace za {
         auto vector_data = loadSound<float>(buffer);
         buffer.seekg(0);
         auto audio_info = loadSoundInfo(buffer);
-
-        auto data = static_cast<float*>(vector_data.data());
-        auto tensor = fl::Variable(af::array(af::dim4(audio_info.channels, audio_info.frames), data), false);
-
+        // Compute Mfcc
+        auto mfcc = vad->featureExtractor(vector_data);
+        auto tensor = fl::Variable(mfcc, false);
         return infer(tensor);
     }
 
-    fl::Variable Inference::infer(const string& path_to_utterance){
+    fl::Variable Inference::infer(string&& path_to_utterance){
         ifstream input_stream(path_to_utterance);
         return infer(input_stream);
     }

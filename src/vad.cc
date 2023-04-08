@@ -43,7 +43,7 @@ namespace za{
 
     af::array Vad::featureExtractor(const vector<float>& input_signal) const {
       auto output_dim = af::dim4(mfccFeature->getFeatureParams().numFrames(input_signal.size()),
-                                 mfccFeature->getFeatureParams().numCepstralCoeffs);
+                                 1, mfccFeature->getFeatureParams().numCepstralCoeffs);
       auto feature = af::array(output_dim,
                         this->mfccFeature->apply(input_signal).data());
       return feature;
@@ -65,6 +65,7 @@ namespace za{
       for (auto& module : this->model->modules()) {
         auto tr = std::dynamic_pointer_cast<fl::Transformer>(module);
         auto cfr = std::dynamic_pointer_cast<fl::Conformer>(module);
+        auto lin = std::dynamic_pointer_cast<fl::Linear>(module);
         if (tr != nullptr || cfr != nullptr) {
           /* input dims of Transformer module should be CxTxBx1 */
           int T = output.dims(1);

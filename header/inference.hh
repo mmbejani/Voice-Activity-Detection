@@ -23,7 +23,7 @@ namespace za{
         Inference(const string&);
 
         //For inferencing from a single utterance file
-        fl::Variable infer(const string&);
+        fl::Variable infer(string&&);
 
         //For inferencing from single stream of utterance bytes
         fl::Variable infer(ifstream&);

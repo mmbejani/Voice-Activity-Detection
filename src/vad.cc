@@ -23,7 +23,12 @@ namespace za{
        *  bool rawenergy = true,
        *  bool zeromeanframe = true
       */
-      this->mfccFeature = std::make_shared<Mfcc>(FeatureParams());
+      auto featureParams = FeatureParams();
+
+      featureParams.useEnergy = false;
+      featureParams.usePower = false;
+      featureParams.zeroMeanFrame = false;
+      this->mfccFeature = std::make_shared<Mfcc>(featureParams);
     }
 
     fl::Variable Vad::operator()(const std::vector<std::vector<float>>& input_signals,

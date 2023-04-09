@@ -16,7 +16,6 @@ namespace za{
     {
     private:
         std::shared_ptr<Mfcc> mfccFeature;
-
     public:
         std::shared_ptr<fl::Sequential> model;
 

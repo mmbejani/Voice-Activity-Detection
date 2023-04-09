@@ -52,6 +52,7 @@ namespace za {
         auto af_lengths = af::array(af::dim4(1, lengths.size()), lengths.data());
 
         auto result = (*this->vad)(signals, af_lengths); 
+        return result;
     }
 
     fl::Variable Inference::inferBatch(const fl::Variable& input, const af::array& input_size){

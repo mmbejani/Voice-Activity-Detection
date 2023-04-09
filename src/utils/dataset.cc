@@ -2,19 +2,23 @@
 
 namespace za{
 
-    DEFINE_uint32(batch_size, 6, "Size of batch size");
+    DEFINE_uint32(batch_size, 2, "Size of batch size");
     DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (TAB Seperated Values) meta data for training");
 
     VADDataset::VADDataset(std::string &manifest_path, uint32_t batch_size){
-        this->preprocessor = std::make_shared<Mfcc>(FeatureParams());
+        auto featureParams = FeatureParams();
+        featureParams.useEnergy = false;
+        featureParams.usePower = false;
+        featureParams.zeroMeanFrame = false;
+        this->preprocessor = inputFeatures(featureParams,
+                                            fl::pkg::speech::FeatureType::MFCC,
+                                            {-1, -1});
         this->audioLoader = [=](const std::string &audioPath){
                    std::vector<float>data = fl::pkg::speech::loadSound<float>(audioPath);
-                   std::vector<float> features = this->preprocessor->apply(data);
-                   af::dim4 features_dim(af::dim4(
-                        this->preprocessor->getFeatureParams().numFrames(data.size()),
-                        this->preprocessor->getFeatureParams().numCepstralCoeffs));
-                   af::array af_data(features_dim, features.data());
-                   return af_data;
+                   auto vec_data = static_cast<void*>(data.data());
+                   auto feature = this->preprocessor(
+                        vec_data, af::dim4(1, data.size()), af::dtype::f32);
+                   return feature;
                 };
 
         this->audioCollator = [](const std::vector<af::array> &dataList){

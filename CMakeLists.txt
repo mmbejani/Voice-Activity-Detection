@@ -31,8 +31,8 @@ find_package(jsoncpp REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
 
 if(BUILD_TRAIN)
-    file(GLOB SRC_FILES src/utils/*.cc)
-    file(GLOB HEADER_FILES header/utils/*.hh)
+    file(GLOB SRC_FILES src/* src/utils/*)
+    file(GLOB HEADER_FILES header/* header/utils/*)
     set(RUN_FILE run_train)
     add_executable(${RUN_FILE} ${SRC_FILES} ${HEADER_FILES})
     target_link_libraries(${RUN_FILE} PRIVATE flashlight::flashlight
@@ -40,7 +40,8 @@ if(BUILD_TRAIN)
                                               flashlight::fl_lib_audio
                                               flashlight::fl_pkg_speech
                                               glog::glog
-                                              jsoncpp_lib)
+                                              jsoncpp_lib
+                                              ${Boost_FILESYSTEM_LIBRARY})
 
 elseif(BUILD_INFER)
     file(GLOB SRC_FILES src/*.cc)
@@ -48,6 +49,7 @@ elseif(BUILD_INFER)
     set(RUN_FILE run_infer)    
     add_executable(${RUN_FILE} ${SRC_FILES} ${HEADER_FILES})
     target_link_libraries(${RUN_FILE} PRIVATE flashlight::flashlight)
+
 elseif(BUILD_TEST)
     file(GLOB SRC_FILES src/utils/* src/*)
     file(GLOB HEADER_FILES header/utils/* header/*)

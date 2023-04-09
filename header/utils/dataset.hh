@@ -6,8 +6,9 @@
 #include <flashlight/pkg/speech/data/Sound.h>
 #include <flashlight/fl/flashlight.h>
 #include <flashlight/pkg/speech/common/Flags.h>
-#include <flashlight/lib/audio/feature/Mfcc.h>
 #include <flashlight/lib/audio/feature/FeatureParams.h>
+#include <flashlight/pkg/speech/data/FeatureTransforms.h>
+
 
 
 #include <gflags/gflags.h>
@@ -27,6 +28,8 @@
 
 #include "utils.hh"
 
+using fl::pkg::speech::inputFeatures;
+
 using namespace fl::lib::audio;
 
 namespace za{
@@ -40,7 +43,7 @@ namespace za{
             std::vector<af::array> get(const int64_t idx) const override;
             int64_t size() const override;
             BatchFunction audioCollator, lengthCollator;         
-            std::shared_ptr<Mfcc> preprocessor;
+            fl::Dataset::DataTransformFunction preprocessor;
 
         private:
             std::vector<std::string> audio_paths;

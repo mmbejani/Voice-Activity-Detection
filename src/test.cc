@@ -11,8 +11,8 @@ void print_dim_af(const af::array& a){
     std::cout << ")" << std::endl;
 }
 
-int main(int argc, char **argv){
-    google::InitGoogleLogging(*argv);
+void f(int argc, char **argv){
+    /*google::InitGoogleLogging(*argv);
     google::ParseCommandLineFlags(&argc, &argv, false);
     fl::init();
     
@@ -33,7 +33,7 @@ int main(int argc, char **argv){
 
     std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic).count();
     
-    /*
+    
     
     auto output = model->infer("/home/mahdi/Downloads/a.wav");
     int times = 0;
@@ -47,5 +47,5 @@ int main(int argc, char **argv){
 
     cout << times / 100;*/
     
-    return 0;
+    //return 0;
 }

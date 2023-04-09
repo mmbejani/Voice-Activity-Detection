@@ -58,14 +58,14 @@ namespace za{
       int B = mfccFeature.dims(3);
       auto inputMaxSize = af::tile(af::max(input_sizes), 1, B);
       af::array inputNotPaddedSize = af::ceil(input_sizes * T / inputMaxSize);
-      auto padMask = af::iota(af::dim4(T, 1), af::dim4(1, B)) <
-          af::tile(inputNotPaddedSize, T, 1);
+      auto t = af::tile(inputNotPaddedSize, T, 1);
+      auto iota = af::iota(af::dim4(T, 1), af::dim4(1, B));
+      auto padMask = iota < t;
       af::array inputNotPaddedSizeRatio = input_sizes / inputMaxSize;
       auto output = mfccFeature;
       for (auto& module : this->model->modules()) {
         auto tr = std::dynamic_pointer_cast<fl::Transformer>(module);
         auto cfr = std::dynamic_pointer_cast<fl::Conformer>(module);
-        auto lin = std::dynamic_pointer_cast<fl::Linear>(module);
         if (tr != nullptr || cfr != nullptr) {
           /* input dims of Transformer module should be CxTxBx1 */
           int T = output.dims(1);

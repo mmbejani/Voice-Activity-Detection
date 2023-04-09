@@ -1,9 +1,9 @@
 #include "dataset.hh"
 
-DEFINE_uint32(batch_size, 4, "Size of batch size");
-DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (TAB Seperated Values) meta data for training");
-
 namespace za{
+
+    DEFINE_uint32(batch_size, 6, "Size of batch size");
+    DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (TAB Seperated Values) meta data for training");
 
     VADDataset::VADDataset(std::string &manifest_path, uint32_t batch_size){
         this->preprocessor = std::make_shared<Mfcc>(FeatureParams());
@@ -11,10 +11,10 @@ namespace za{
                    std::vector<float>data = fl::pkg::speech::loadSound<float>(audioPath);
                    std::vector<float> features = this->preprocessor->apply(data);
                    af::dim4 features_dim(af::dim4(
-                        this->preprocessor->getFeatureParams().numCepstralCoeffs,
-                        this->preprocessor->getFeatureParams().numFrames(data.size())));
+                        this->preprocessor->getFeatureParams().numFrames(data.size()),
+                        this->preprocessor->getFeatureParams().numCepstralCoeffs));
                    af::array af_data(features_dim, features.data());
-                   return af_data.T();
+                   return af_data;
                 };
 
         this->audioCollator = [](const std::vector<af::array> &dataList){
@@ -37,6 +37,13 @@ namespace za{
             }
 
             af::array pad_array = za::cat_array(cat_dim, pad_arrays);
+            pad_array = af::reorder(pad_array, 0, 3, 1, 2);
+
+            return pad_array;
+        };
+
+        this->lengthCollator = [](const std::vector<af::array> &labelList){
+            af::array pad_array = af::array(za::cat_array(1, labelList));
             return pad_array;
         };
         

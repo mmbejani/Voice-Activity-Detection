@@ -7,6 +7,7 @@ using fl::lib::audio::FeatureParams;
 using namespace boost::filesystem;
 
 namespace za{
+
     DEFINE_string(model_config, "model.conf", "Path to Config of Model");
     DEFINE_uint32(num_feature, 13, "Number of extracted features");
     DEFINE_string(checkpoint_path, "", "The root file that all of the checkpoint is going to be saved there");
@@ -40,9 +41,9 @@ namespace za{
     }
 
     af::array& Train::step(std::vector<af::array>& batch){
-        auto inputs = fl::Variable(batch[0], false);
+        auto inputs = fl::Variable(batch[0], false).linear();
         auto input_lengths = batch[1];
-        auto targets = fl::Variable(batch[2], false);
+        auto targets = fl::Variable(batch[2], false).linear();
 
         //forward path
         auto outputs = (*this->vad)(inputs, input_lengths);

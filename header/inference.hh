@@ -1,10 +1,11 @@
 #pragma once
 
+#include <fstream>
+#include <algorithm>
+
 #include <flashlight/fl/flashlight.h>
 #include <flashlight/pkg/speech/data/Sound.h>
 #include <flashlight/pkg/runtime/common/SequentialBuilder.h>
-
-#include <fstream>
 
 #include "vad.hh"
 
@@ -35,7 +36,7 @@ namespace za{
         fl::Variable inferBatch(const vector<string>&);
 
         //Inference on some utterances as byte stream (batch manner)
-        fl::Variable inferBatch(const vector<ifstream>&);
+        fl::Variable inferBatch(vector<ifstream>&);
 
         /**Inference on some utterances a tensor (batch manner) where
           the shape of the tensor is BxL (B and L stand for batch-size and
@@ -56,6 +57,6 @@ namespace za{
           
         */
         fl::Variable inferBatch(const fl::Variable& input_signals, 
-                                const fl::Variable& input_lengths);
+                                const af::array& input_lengths);
     };   
 }

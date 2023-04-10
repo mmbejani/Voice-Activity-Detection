@@ -51,29 +51,21 @@ namespace za{
         auto input_lengths = batch[1];
         auto targets = fl::noGrad(batch[2]).linear();
 
-        if (fl::isInvalidArray(inputs.array()) || fl::isInvalidArray(input_lengths))
-            throw std::invalid_argument( "received nan value as input" );
-
         //forward path
+        cout << inputs.dims() << endl;
+        auto tic = std::chrono::system_clock::now();
         auto outputs = (*this->vad)(inputs, input_lengths);
-        outputs = outputs(af::span, 0);
-        cout << outputs.dims() << endl;
-        
-        if(!fl::isInvalidArray(outputs.array())){
-            auto loss = this->loss_function->forward(outputs, targets);
-            //backward path
-            this->optimizer->zeroGrad();
-            loss.backward();
-
-            //optimization step
-            fl::clipGradNorm(this->vad->model->params(), 1e-3);
-            this->optimizer->step();
-
-            return loss.array();
-        }
-
-        LOG(WARNING) << "The output of network becomes nan";
-        return af::array(1);
+        auto toc = std::chrono::system_clock::now();
+        cout << "Duration of inference : " << std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic).count() << endl;
+        outputs = outputs(af::span, 1);
+        this->optimizer->zeroGrad();
+        auto loss = this->loss_function->forward(outputs, targets);
+        //backward path
+        loss.backward();
+        //optimization step
+        fl::clipGradNorm(this->vad->model->params(), 100.0);
+        this->optimizer->step();
+        return loss.array();
     }
 
     void Train::start_of_epoch(const size_t num_epoch){
@@ -88,13 +80,13 @@ namespace za{
         LOG(INFO) << "The model is going to be saved in checkpoint directory with name " <<
                         checkpoint_save_fmt.str();
         
-        Serializer::save(checkpoint_save_fmt.str(), "v0.0.1", this->vad->model);
+        Serializer::save(checkpoint_save_fmt.str(), "v0.0.0", this->vad->model);
         return;
     }
 
     void Train::load_model(){
         auto checkpoint_path = find_last_checkpoint();
-        fl::load(checkpoint_path, this->vad->model);
+        Serializer::load(checkpoint_path, this->vad->model);
         return;
     }
 

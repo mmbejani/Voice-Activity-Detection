@@ -5,6 +5,8 @@
 using namespace za;
 using namespace fl::pkg::runtime;
 
+DEFINE_double(lr, 0.01, "Learning Rate");
+
 int main(int argc, char **argv){
     google::InitGoogleLogging(*argv);
     google::ParseCommandLineFlags(&argc, &argv, false);
@@ -20,10 +22,10 @@ int main(int argc, char **argv){
     // Creating model
     auto model = buildSequentialModule("/home/mahdi/Project/Voice-Activity-Detection/src/model.conf", 39, 1);
     auto vad = make_shared<Vad>(model);
-
+    
     //Creating optimizer
     auto optimizer = static_pointer_cast<fl::FirstOrderOptimizer> 
-                    (make_shared<fl::SGDOptimizer>(vad->model->params(), 1e-5));
+                    (make_shared<fl::AdamOptimizer>(vad->model->params(), FLAGS_lr));
 
     //Creating loss function
     auto loss = make_shared<fl::MSE>();

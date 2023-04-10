@@ -2,7 +2,7 @@
 
 namespace za{
 
-    DEFINE_uint32(batch_size, 2, "Size of batch size");
+    DEFINE_uint32(batch_size, 4, "Size of batch size");
     DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (TAB Seperated Values) meta data for training");
 
     VADDataset::VADDataset(std::string &manifest_path, uint32_t batch_size){

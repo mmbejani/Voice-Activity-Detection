@@ -37,12 +37,14 @@ namespace za{
             unsigned int iteration = 1;
             this->start_of_epoch(epoch);
             for (auto &batch : *this->dataset){
+                auto tic = std::chrono::system_clock::now();
                 auto loss_array = this->step(batch);
                 auto loss = loss_array.host<float>();
+                auto toc = std::chrono::system_clock::now();
                 LOG(INFO) << "In iteration " << iteration << " loss value becomes " << *loss;
                 iteration++;
             }
-            //this->end_of_epoch(epoch);
+            this->end_of_epoch(epoch);
         }
     }
 
@@ -52,11 +54,7 @@ namespace za{
         auto targets = fl::noGrad(batch[2]).linear();
 
         //forward path
-        cout << inputs.dims() << endl;
-        auto tic = std::chrono::system_clock::now();
         auto outputs = (*this->vad)(inputs, input_lengths);
-        auto toc = std::chrono::system_clock::now();
-        cout << "Duration of inference : " << std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic).count() << endl;
         outputs = outputs(af::span, 1);
         this->optimizer->zeroGrad();
         auto loss = this->loss_function->forward(outputs, targets);

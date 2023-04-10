@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package za;
+
+service SAD {
+  rpc validate (AudioRequest) returns (AnomalyReply) {}
+}
+
+message AudioRequest {
+  bytes audioBytes = 1;
+}
+
+message AnomalyReply {
+  bool isValid = 1;
+}

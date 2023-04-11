@@ -27,13 +27,13 @@ namespace za {
     }
 
     fl::Variable Inference::inferBatch(const vector<string>& path_to_utterances){
-        vector<ifstream> streams;
+        vector<istream> streams;
         for (auto& path: path_to_utterances)
             streams.push_back(ifstream(path));
         return inferBatch(streams);
     }
 
-    fl::Variable Inference::inferBatch(vector<ifstream>& streams){
+    fl::Variable Inference::inferBatch(vector<istream>& streams){
         float max_length = 0;
         vector<float>lengths;
         vector<vector<float>> signals;

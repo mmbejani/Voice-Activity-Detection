@@ -1,5 +1,7 @@
 #include <arrayfire.h>
 
+#include <glog/logging.h>
+
 using namespace std;
 
 namespace za {

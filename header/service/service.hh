@@ -2,30 +2,50 @@
 
 #include "service.pb.h"
 #include "service.grpc.pb.h"
+#include "inference.hh"
 
-#include <vector>
+#include <glog/logging.h>
+#include <gflags/gflags.h>
+
+#include <deque>
+#include <map>
 #include <thread>
 #include <mutex>
+#include <chrono>
+#include <random>
 
 using namespace grpc;
 using namespace std;
 
 namespace za {
 
-    mutex result;
-    mutex add;
+    DECLARE_string(path_to_model);
+    DECLARE_double(determination_threshold);
+
+    mutex result_mutex;
+    mutex validation_mutex;
 
     class ServiceImpl : public SAD::Service {
         public:
-            ServiceImpl();
+            ServiceImpl(unsigned short max_batch_size,
+                        unsigned short wait_time);
 
             Status validate(ServerContext* context, 
                             const AudioRequest* request, 
                             AnomalyReply* response) override;
             
         private:
-            void inferenceLoop();
+            [[noreturn]] void inferenceLoop();
+            void inferenceOnBatch();
+            inline long generateId() const;
 
-            vector<AudioRequest*> request_queue;
+            const unsigned short max_batch_size;
+            const unsigned short wait_time;
+            unsigned short number_current_request_in_queue;
+            shared_ptr<Inference> model;
+            shared_ptr<deque<pair<const long, const AudioRequest*>>> request_queue;
+            condition_variable preparing_result;
+            map<const long, bool> results;
+            thread* inferenceThread;
     };
 }

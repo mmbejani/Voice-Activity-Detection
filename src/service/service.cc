@@ -36,11 +36,14 @@ namespace za {
     }
 
     void ServiceImpl::inferenceLoop(){
+        LOG(INFO) << "Inference loop thread is started";
         while (true) {
-            LOG(INFO) << "Thread is wating for filling queue";
             this_thread::sleep_for(chrono::milliseconds(this->wait_time));
             unique_lock<mutex> lock_validation(validation_mutex);
+            int num_request = request_queue->size();
+            LOG(INFO) << "Inference is going done on " << num_request << " requests";
             this->inferenceOnBatch();
+            LOG(INFO) << "Inference is done on " << num_request << " requests";
             lock_validation.unlock();
         }
     }
@@ -91,6 +94,7 @@ int main(int argc, char** argv){
     fl::init();
 
     while(true){
+        try{
             string server_address("0.0.0.0:50051");
             za::ServiceImpl service(FLAGS_max_batch_size, FLAGS_wait_time);
 
@@ -102,9 +106,9 @@ int main(int argc, char** argv){
             cout << "Server listening on " << server_address << endl;
 
             server->Wait();
-        //}catch(...){
-        //    cout << "Server shutdown!!!" << endl;
-        //}
+        }catch(...){
+            cout << "Server shutdown!!!" << endl;
+        }
     }
     return 0;
 }

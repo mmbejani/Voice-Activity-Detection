@@ -1,5 +1,7 @@
 #pragma once
 
+#include <grpc++/grpc++.h>
+
 #include "service.pb.h"
 #include "service.grpc.pb.h"
 #include "inference.hh"
@@ -17,10 +19,12 @@
 using namespace grpc;
 using namespace std;
 
-namespace za {
+DECLARE_string(path_to_model);
+DECLARE_double(determination_threshold);
+DECLARE_uint32(batch_size);
+DECLARE_uint32(wait_time);
 
-    DECLARE_string(path_to_model);
-    DECLARE_double(determination_threshold);
+namespace za {
 
     mutex result_mutex;
     mutex validation_mutex;

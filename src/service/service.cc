@@ -1,10 +1,11 @@
 #include "service.hh"
 
-#include <semaphore>
-namespace za {
+DEFINE_string(path_to_model, "/path/to/model", "Path to Model file (bin)");
+DEFINE_double(determination_threshold, 0.5, "Whether or not accept the output of network");
+DEFINE_uint32(batch_size, 30, "Batch size");
+DEFINE_uint32(wait_time, 50, "Waiting time");
 
-    DEFINE_string(path_to_model, "/path/to/model", "Path to Model file (bin)");
-    DEFINE_double(determination_threshold, 0.5, "Whether or not accept the output of network");
+namespace za {
 
     ServiceImpl::ServiceImpl(unsigned short max_batch_size,
                              unsigned short wait_time) :
@@ -77,4 +78,30 @@ namespace za {
         long time = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
         return time + rand();
     }
+}
+
+int main(int argc, char** argv){
+    google::InitGoogleLogging(*argv);
+    google::ParseCommandLineFlags(&argc, &argv, false);
+    google::SetStderrLogging(0);
+    fl::init();
+
+    while(true){
+        try{
+            string server_address("0.0.0.0:50051");
+            za::ServiceImpl service(FLAGS_batch_size, FLAGS_wait_time);
+
+            ServerBuilder builder;
+            builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+            builder.RegisterService(&service);
+
+            unique_ptr<Server> server(builder.BuildAndStart());
+            cout << "Server listening on " << server_address << endl;
+
+            server->Wait();
+        }catch(...){
+            cout << "Server shutdown!!!" << endl;
+        }
+    }
+    return 0;
 }

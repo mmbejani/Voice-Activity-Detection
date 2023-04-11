@@ -5,6 +5,7 @@ project(VAD LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include_directories(header/service)
 include_directories(header/utils)
 include_directories(header)
 
@@ -61,6 +62,25 @@ elseif(BUILD_TEST)
                                               flashlight::fl_lib_audio
                                               glog::glog
                                               jsoncpp_lib
+                                              ${Boost_FILESYSTEM_LIBRARY})
+
+
+elseif(BUILD_SERVICE)
+    find_package(Protobuf CONFIG REQUIRED)
+    find_package(gRPC CONFIG REQUIRED)
+    file(GLOB SRC_FILES src/utils/* src/service/* src/*)
+    file(GLOB HEADER_FILES header/utils/* header/service/* header/*)
+    set(RUN_FILE run_service)
+    add_executable(${RUN_FILE} ${SRC_FILES} ${HEADER_FILES})
+    target_link_libraries(${RUN_FILE} PRIVATE flashlight::flashlight
+                                              flashlight::fl_pkg_runtime
+                                              flashlight::fl_pkg_speech
+                                              flashlight::fl_lib_audio
+                                              glog::glog
+                                              jsoncpp_lib
+                                              protobuf::libprotobuf
+                                              gRPC::grpc++_reflection
+                                              gRPC::grpc++
                                               ${Boost_FILESYSTEM_LIBRARY})
 else()
     message(FATAL_ERROR "Select one of the options 1. BUILD_INFER 2.BUILD_TRAIN 3.BUILD_TEST")

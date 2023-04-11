@@ -21,7 +21,7 @@ using namespace std;
 
 DECLARE_string(path_to_model);
 DECLARE_double(determination_threshold);
-DECLARE_uint32(batch_size);
+DECLARE_uint32(max_batch_size);
 DECLARE_uint32(wait_time);
 
 namespace za {

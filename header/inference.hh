@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fstream>
+#include <iostream>
 #include <algorithm>
 
 #include <flashlight/fl/flashlight.h>
@@ -36,7 +36,7 @@ namespace za{
         fl::Variable inferBatch(const vector<string>&);
 
         //Inference on some utterances as byte stream (batch manner)
-        fl::Variable inferBatch(vector<istream>&);
+        fl::Variable inferBatch(vector<istream*>&);
 
         /**Inference on some utterances a tensor (batch manner) where
           the shape of the tensor is BxL (B and L stand for batch-size and

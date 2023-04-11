@@ -7,7 +7,7 @@ using namespace fl::pkg::runtime;
 
 DEFINE_double(lr, 0.01, "Learning Rate");
 
-int main(int argc, char **argv){
+/*int f(int argc, char **argv){
     google::InitGoogleLogging(*argv);
     google::ParseCommandLineFlags(&argc, &argv, false);
     google::SetStderrLogging(0);
@@ -34,4 +34,4 @@ int main(int argc, char **argv){
     auto trainer = Train(vad, loader, loss, optimizer, 100);
     trainer.start_train_process();
     return 0;
-}
+}*/

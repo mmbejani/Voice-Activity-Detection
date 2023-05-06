@@ -7,7 +7,7 @@ using namespace fl::pkg::runtime;
 
 DEFINE_double(lr, 0.01, "Learning Rate");
 
-/*int f(int argc, char **argv){
+int main(int argc, char **argv){
     google::InitGoogleLogging(*argv);
     google::ParseCommandLineFlags(&argc, &argv, false);
     google::SetStderrLogging(0);
@@ -20,7 +20,7 @@ DEFINE_double(lr, 0.01, "Learning Rate");
     auto loader = make_shared<fl::BatchDataset>(loader_var);
 
     // Creating model
-    auto model = buildSequentialModule("/home/mahdi/Project/Voice-Activity-Detection/src/model.conf", 39, 1);
+    auto model = buildSequentialModule(FLAGS_model_config, 39, 1);
     auto vad = make_shared<Vad>(model);
     
     //Creating optimizer
@@ -34,4 +34,4 @@ DEFINE_double(lr, 0.01, "Learning Rate");
     auto trainer = Train(vad, loader, loss, optimizer, 100);
     trainer.start_train_process();
     return 0;
-}*/
+}

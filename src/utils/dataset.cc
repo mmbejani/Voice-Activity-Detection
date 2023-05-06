@@ -2,8 +2,8 @@
 
 namespace za{
 
-    DEFINE_uint32(batch_size, 4, "Size of batch size");
-    DEFINE_string(manifest_path, "/home/mahdi/data/with-noise.json", "Path to tsv (TAB Seperated Values) meta data for training");
+    DEFINE_uint32(batch_size, 64, "Size of batch size");
+    DEFINE_string(manifest_path, "data.json", "Json file with definition of NeMo framework");
 
     VADDataset::VADDataset(std::string &manifest_path, uint32_t batch_size){
         auto featureParams = FeatureParams();
